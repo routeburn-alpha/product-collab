@@ -31,7 +31,7 @@ Studio AI gives you tools for both parts. As you work on Quiz Lab, it gives you:
 - **Small, incremental steps with clear specification and background context** so agents implement with high quality the first time. The result: efficient context management and less rework.
 - **Tasks that auto-link to GitHub PRs.** Open a PR on your Quiz Lab repo and it appears on the task. Merge it and the task closes itself. The plumbing stays out of your way.
 - **An MCP server** so your coding agent (Claude Code or similar) can pick up tasks, load context, and submit work for review without you copy-pasting between windows.
-- **Different models and frameworks for async work** *(coming soon).* For the toil and deterministic tasks where you don't need to pair, hand them off to a cheaper or more autonomous runner and stay focused on the high-value judgment calls.
+- **Managed tasks for async work.** For toil and well-specified deterministic tasks where you don't need to pair, hand them off to a managed (cloud) Claude run and stay focused on the high-value judgment calls. See [MANAGED-TASKS.md](./MANAGED-TASKS.md).
 
 The bet: you spend more time on **high-value judgment** (what to build for Quiz Lab, how sharp the hypothesis is, whether the result actually moved the needle) and less time on the toil around it. You're our test pilots for that bet. Tell us where it pays off and where it doesn't. That's the most valuable thing to come out of alpha.
 
@@ -360,7 +360,7 @@ They're optional. Use whatever workflow works best for managing your agents, whe
 
 **3. Run `/bootstrap-agent`.** Installs dependencies, regenerates config, writes the env file, and verifies the product app runs. Idempotent, so safe to re-run anytime the workspace feels stale.
 
-**4. Register the agent in Studio AI.** Ask your agent in plain language: *"Register me as a supervised agent named `quiz-felix`."* It calls `register_agent` for you. Alpha uses supervised mode (managed modes ship later). If you want to confirm, ask: *"List the registered agents."*
+**4. Register the agent in Studio AI.** Ask your agent in plain language: *"Register me as a supervised agent named `quiz-felix`."* It calls `register_agent` for you. Supervised mode is for the local-agent loop in this part of the walkthrough; for the cloud-run alternative, see [MANAGED-TASKS.md](./MANAGED-TASKS.md). If you want to confirm, ask: *"List the registered agents."*
 
 **5. Sanity-check anytime with `/worktree-status`.** Reports the workspace state (clean, branch, sync with `main`). Useful before picking up a task and after long-running agent runs.
 
@@ -440,6 +440,22 @@ The alpha cohort is small enough to feel like a working group, not a beta panel.
 - **Use the shared `product-collab` product.** Drop joint ideas there. Useful for things that benefit from multiple perspectives: rubrics, content sets, shared utilities your individual apps might pull from.
 
 The bet behind alpha: small-group collaboration around AI-assisted product work generates a different kind of feedback than one user talking to one PM ever does. Make the cohort dynamic part of the experiment, not just the tooling.
+
+### Part F: Try a managed task (async, no local agent)
+
+Once you've shipped a task or two with a supervised local agent, try the other lane: **managed tasks**. Instead of running Claude Code in your worktree, Studio AI runs Claude in the cloud against your repo, opens the PR, and submits for review on your behalf. You don't need a worktree, a registered agent, or Claude Code open. You pick the task, pick the model (Opus or Sonnet), and click **Execute**.
+
+**The short version:**
+
+1. Open a task in the backlog with a clear spec.
+2. In the **Execution** section, set the agent to **Managed (Opus)** or **Managed (Sonnet)**.
+3. Click **Execute**. The task moves to `inProgress` and the run starts.
+4. Watch the run in the task's **Executions** tab (live event stream: messages, tool calls, bash, costs).
+5. When the agent opens a PR and submits for review, you review and merge as normal.
+
+Good fits: well-specified small features, refactors, doc updates, anything you'd otherwise babysit a local agent through without intervening. Bad fits: exploratory work, fuzzy specs, anything that needs you to course-correct mid-run.
+
+Full walkthrough, model trade-offs, prerequisites, and limits: [MANAGED-TASKS.md](./MANAGED-TASKS.md).
 
 ### What you'll have at the end
 
